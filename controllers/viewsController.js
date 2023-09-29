@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
+const Server= require('./../models/serverModel');
 
 
 
@@ -21,7 +22,9 @@ exports.loginPage = async (req, res, next) => {
 exports.serverCreation=async (req,res,next)=>
 {
 try{
-
+    let decoded = jwt.verify( req.cookies.jwt, process.env.JWT_SECRET,function (err, decoded) { return decoded.id; });
+    let user= await  User.findById(decoded)
+    res.status(200).render('serverCreation',{user})
 }
 catch(e)
 {
@@ -29,7 +32,34 @@ catch(e)
 }
 }
 
+
+exports.serverRegistration=async (req,res,next)=>
+{
+try{
+    let decoded = jwt.verify( req.cookies.jwt, process.env.JWT_SECRET,function (err, decoded) { return decoded.id; });
+    let user= await  User.findById(decoded)
+    res.status(200).render('serverRegistration',{user})
+}
+catch(e)
+{
+    console.log("error in server Registration viewes controler ",e)
+}
+}
+
 exports.clientCreation=async (req,res,next)=>
 {
-    res.status(200).render('clientCreation')
+
+
+    try{
+
+        const servers= await Server.find();
+
+        let decoded = jwt.verify( req.cookies.jwt, process.env.JWT_SECRET,function (err, decoded) { return decoded.id; });
+        let user= await  User.findById(decoded)
+        res.status(200).render('clientCreation',{user, servers})
+    }
+    catch(e)
+    {
+        console.log("error in client registration viewes controler ",e)
+    }
 }

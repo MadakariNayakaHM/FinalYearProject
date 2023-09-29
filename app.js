@@ -6,7 +6,7 @@ const cookieParser=require('cookie-parser')
 const viewsRoutes = require("./routes/viewsRoutes");
 const userRoutes = require("./routes/userRouter");
 const serverRoutes=require('./routes/serverRoutes');
-
+const clientRoutes=require('./routes/clientRoutes');
 const app = express();
 app.use(cookieParser())
 app.use(express.json());
@@ -22,6 +22,7 @@ app.use((req, res, next) => {
 app.use("/api/v1/user", userRoutes);
 app.use('/', viewsRoutes)
 app.use("/api/v1/server",serverRoutes);
+app.use("/api/v1/client", clientRoutes);
 
 
 

@@ -2,7 +2,7 @@ const mongoose =require('mongoose');
 const clientSchema=mongoose.Schema(
     {
         clientName:{type:String,required:true,unique:true},
-        serverEndPoint:{type:String,required:true,unique:true},
+        serverEndPoint:{type:String,required:true},
         userId:{
             type:mongoose.Schema.ObjectId,
             ref:'User',
@@ -24,7 +24,7 @@ const clientSchema=mongoose.Schema(
     }
 )
 
-serverSchema.pre(/^find/, function(next) {
+clientSchema.pre(/^find/, function(next) {
     
   
     this.populate({
