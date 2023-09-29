@@ -63,3 +63,20 @@ exports.clientCreation=async (req,res,next)=>
         console.log("error in client registration viewes controler ",e)
     }
 }
+
+exports.startServer=async (req,res,next)=>
+{
+
+
+    try{
+
+        const servers= await Server.find();
+
+        
+        res.status(200).render('startServer',{ servers})
+    }
+    catch(e)
+    {
+        console.log("error in start server viewes controler ",e)
+    }
+}
