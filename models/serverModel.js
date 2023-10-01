@@ -19,7 +19,9 @@ const serverSchema=mongoose.Schema(
             dataValue:String,
             timeStamp:String
            
-        }]}
+        }]},
+        status:{type:String,
+        default:"stopped"}
 
     }
 )
