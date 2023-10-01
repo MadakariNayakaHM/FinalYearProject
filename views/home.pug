@@ -14,8 +14,15 @@ section.bg-light.py-2
             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#about') About
           li.nav-item
             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#package') Contact
-          li.nav-item
-            a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/signup') Signup
+          if user  
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#',class='logout-button') Logout
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/userProfile') Profile
+          else    
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/signup') Signup
+
 
 
 // --------------- Hero Section With Carousel Start Here--------------
@@ -176,7 +183,6 @@ section(style='padding:2rem 0;')
           img.img-fluid.rounded-3(src='images/temp4.jpg' alt='' srcset='')
 
 
-
-
-
 include footer 
+script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js' integrity='sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==' crossorigin='anonymous' referrerpolicy='no-referrer')
+script(src="/js/login.js")  

@@ -12,5 +12,9 @@ section.bg-light.py-2
                         a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#about') About
                     li.nav-item
                         a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#package') Contact
-                    li.nav-item
-                        //- a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#') Login
+                    if user  
+                        li.nav-item
+                             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#',class='logout-button') Logout
+                    else    
+                        //- li.nav-item
+                        //-      a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='signup') Signup
