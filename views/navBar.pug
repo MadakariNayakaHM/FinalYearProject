@@ -1,7 +1,7 @@
 section.bg-light.py-2
     nav.navbar.navbar-expand-lg.bg-light.w-75.w-100.mx-auto(style='background-color: rgba(0, 0, 0, 0.2);')
         .container-fluid
-            a.navbar-brand.text-dark.fw-semibold.w-25.ms-lg-5(href='#') Infotech
+            a.navbar-brand.text-dark.fw-semibold.w-25.ms-lg-5(href='#') PsycheTech
             button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
                 span.navbar-toggler-icon
             #navbarSupportedContent.collapse.navbar-collapse
@@ -12,5 +12,7 @@ section.bg-light.py-2
                         a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#about') About
                     li.nav-item
                         a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#package') Contact
-                    li.nav-item
-                        //- a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#') Login
+                    if user  
+                        li.nav-item
+                             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#',class='logout-button') Logout
+                        

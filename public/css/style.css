@@ -128,5 +128,10 @@ body{
 .wrapper .login_with img{
     max-width: 8%;
 }
-        
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }    
       

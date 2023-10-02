@@ -7,9 +7,14 @@ const viewsRoutes = require("./routes/viewsRoutes");
 const userRoutes = require("./routes/userRouter");
 const serverRoutes = require('./routes/serverRoutes');
 const clientRoutes = require('./routes/clientRoutes');
+
 const app = express();
+
+
 app.use(cookieParser())
 app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
 
 app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,9 +30,4 @@ app.use("/api/v1/server", serverRoutes);
 app.use("/api/v1/client", clientRoutes);
 
 
-
-//hiii
-// app.all("*", (req, res, next) => {
-//     next(new AppError(`cant find ${req.originalUrl}`, 404));
-// });
 module.exports = app;

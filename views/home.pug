@@ -3,7 +3,7 @@ include head
 section.bg-light.py-2
   nav.navbar.navbar-expand-lg.bg-light.w-75.w-100.mx-auto(style='background-color: rgba(0, 0, 0, 0.2);')
     .container-fluid
-      a.navbar-brand.text-dark.fw-semibold.w-25.ms-lg-5(href='#') Infotech
+      a.navbar-brand.text-dark.fw-semibold.w-25.ms-lg-5(href='#') PsycheTech
       button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
         span.navbar-toggler-icon
       #navbarSupportedContent.collapse.navbar-collapse
@@ -14,8 +14,15 @@ section.bg-light.py-2
             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#about') About
           li.nav-item
             a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#package') Contact
-          li.nav-item
-            a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/signup') Signup
+          if user  
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='#',class='logout-button') Logout
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/userProfile') Profile
+          else    
+            li.nav-item
+              a.nav-link.text-dark.ms-3.btn.btn-outline-primary.px-4.fw-semibold.border-0(href='/signup') Signup
+
 
 
 // --------------- Hero Section With Carousel Start Here--------------
@@ -28,22 +35,22 @@ section#home
       button(type='button' data-bs-target='#carouselExampleDark' data-bs-slide-to='2' aria-label='Slide 3')
     .carousel-inner
       
-      .carousel-item.active(data-bs-interval='2000')
-        img.w-100.banner-image(src='images/banner.jpeg' alt='bidjvblqiefbvqlefiuvbief')
+      .carousel-item.active(data-bs-interval='4000')
+        img.w-100.banner-image(src='images/temp5.png' alt='')
         .carousel-caption.d-md-block.my-lg-4
           h5.text-light.fw-semibold.fs-2.w-lg-50.mx-lg-auto.mb-4 ipsum dolor sit amet consectetur adipisicing elit. Dicta
           p.text-white.w-75.mx-auto
             | Lorem ipsum dolor sit, amet consectetur adipisicing elit. Distinctio temporibus natus dolore ut perferendis ducimus?
      
       .carousel-item(data-bs-interval='2000')
-        img.w-100.banner-image(src='images/temp1.jpeg' alt='...')
+        img.w-100.banner-image(src='images/temp0.jpg' alt='')
         .carousel-caption.d-md-block.my-lg-4
           h5.text-light.fw-semibold.fs-2.w-lg-50.mx-lg-auto.mb-4 ipsum dolor sit amet consectetur adipisicing elit. Dicta
           p.text-white.w-75.mx-auto
             | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellat dicta autem quos saepe temporibus reprehenderit.
       
       .carousel-item
-        img.w-100.banner-image(src='images/temp2.jpg' alt='...')
+        img.w-100.banner-image(src='images/temp1.jpg' alt='')
         .carousel-caption.d-md-block.my-lg-4
           h5.text-light.fw-semibold.fs-2.w-lg-50.mx-lg-auto.mb-4 ipsum dolor sit amet consectetur adipisicing elit. Dicta
           p.text-white.w-75.mx-auto.w-75.mx-auto
@@ -175,8 +182,8 @@ section(style='padding:2rem 0;')
         .mx-auto
           img.img-fluid.rounded-3(src='images/temp4.jpg' alt='' srcset='')
 
+include footer
+script(src="/js/login.js")   
+script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js' integrity='sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa' crossorigin='anonymous')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js' integrity='sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==' crossorigin='anonymous' referrerpolicy='no-referrer')
 
-
-
-
-include footer 
