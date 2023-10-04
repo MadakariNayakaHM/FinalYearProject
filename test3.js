@@ -1,18 +1,38 @@
-from opcua import Client
-# Create a client instance
-client = Client("opc.tcp://26.107.113.149:4840/opcua/")
-try:
- # Connect to the server
- client.connect()
- # Browse for temperature and pressure nodes
- temperature_node = client.get_node("ns=2;i=2")
- pressure_node = client.get_node("ns=2;i=3")
- # Read node values
- while True:
-  temperature_value = temperature_node.get_value()
-  pressure_value = pressure_node.get_value()
-  print("Temperature: {} °C".format(temperature_value))
-  print("Pressure: {} kPa".format(pressure_value))
-finally:
-# Disconnect the client
- client.disconnect()
+let updateCounter = 0;
+    const dataToUpdate = [];
+
+    const updateInterval = setInterval(async () => {
+      if (updateCounter >= 10) {
+        clearInterval(updateInterval);
+
+        // Update the database with all data points
+        await Server.findByIdAndUpdate(
+          newServer._id,
+          { $push: { data: { $each: dataToUpdate } } },
+          { new: true, runValidators: true }
+        );
+
+        server.shutdown(() => {
+          console.log('Server stopped after sending 10 data values.');
+          // process.exit(0);
+        });
+        return;
+      }
+
+      const temperatureValue = Math.random() * 50 + 20;
+      
+
+      const obj = {
+        dataName: dataName,
+        dataValue: temperatureValue,
+        timeStamp: new Date(),
+      };
+
+      // Store data for bulk update
+      dataToUpdate.push(obj);
+
+      temperatureNode.setValueFromSource(new opcua.Variant({ dataType: opcua.DataType.Double, value: temperatureValue }));
+      
+
+      updateCounter++;
+    }, 5000);
