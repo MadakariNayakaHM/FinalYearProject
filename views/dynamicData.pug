@@ -7,75 +7,79 @@ head
   style.
     /* Style for the black window */
     .window {
-    height: 35vh; /* 1/4 of the viewport height */
-    width: 100%; /* Full width */
-    background-color: black;
-    overflow: hidden; /* Hide overflowing content */
-    padding: 20px; /* Add padding for better display */
-    box-sizing: border-box; /* Include padding in the width */
-    position: relative; /* Position for absolute elements */
-    color: white;
+      height: 100%; 
+      width: 100%; 
+      background-color: black;
+      overflow: hidden; 
+      padding: 20px; 
+      box-sizing: border-box; 
+      position: relative; 
+      color: white;
     }
     .inner-container {
-    display: inline-block;
-    white-space: nowrap;
-    transition: transform 1s linear; /* Smooth scrolling transition */
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
-    /* Style for the key-value pairs */
-    .key-value {
-    margin: 10px;
-    padding: 10px;
-    color: white;
-    display: inline-block;
+    .card {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #212529; /* Dark color for card background */
+      border: 1px solid #6c757d; /* Border color */
+      border-radius: 5px;
+      width: 300px;
     }
-    .key {
-    font-weight: bold;
-    color: #ffcc00; /* Yellow */
+    .card .key {
+      font-weight: bold;
+      color: #ffcc00; /* Yellow */
     }
-    .value {
-    color: #00ccff; /* Blue */
+    .card .value {
+      color: #00ccff; /* Blue */
     }
 
 include navBar
 .window
   #dynamic-content.inner-container
 
+script.
+  // Function to update data
+  function updateData() {
+    fetch('/serverDynamicData')
+      .then(response => response.json())
+      .then(data => {
+        const innerContainer = document.getElementById('dynamic-content');
+        innerContainer.innerHTML = '';
 
-    script.
-      // Function to update data
-      function updateData() {
-        fetch('/serverDynamicData')
-          .then(response => response.json())
-        
-          .then(data => {
-            const innerContainer = document.getElementById('dynamic-content');
-            innerContainer.innerHTML = '';
-            console.log(data)
-            data.dataToUpdate.forEach((dataObject) => {
-              const keyValueElement = document.createElement('div');
-              keyValueElement.className = 'key-value';
+        data.dataToUpdate.forEach((dataObject) => {
+          const card = document.createElement('div');
+          card.className = 'card';
 
-              for (const [key, value] of Object.entries(dataObject)) {
-                const keyElement = document.createElement('div');
-                keyElement.className = 'key';
-                keyElement.textContent = `${key}:`;
+          for (const [key, value] of Object.entries(dataObject)) {
+            const keyValueElement = document.createElement('div');
+            keyValueElement.className = 'key-value';
 
-                const valueElement = document.createElement('div');
-                valueElement.className = 'value';
-                valueElement.textContent = value;
+            const keyElement = document.createElement('div');
+            keyElement.className = 'key';
+            keyElement.textContent = `${key}:`;
 
-                keyValueElement.appendChild(keyElement);
-                keyValueElement.appendChild(valueElement);
-              }
+            const valueElement = document.createElement('div');
+            valueElement.className = 'value';
+            valueElement.textContent = value;
 
-              innerContainer.appendChild(keyValueElement);
-            });
-          })
-          .catch(error => console.error('Error fetching data:from ff', error));
-      }
+            keyValueElement.appendChild(keyElement);
+            keyValueElement.appendChild(valueElement);
 
-      // Update data initially
-      updateData();
+            card.appendChild(keyValueElement);
+          }
 
-      // Update data every 5 seconds (adjust as needed)
-      setInterval(updateData,5000);
+          innerContainer.appendChild(card);
+        });
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }
+
+  // Update data initially
+  updateData();
+
+  // Update data every 5 seconds (adjust as needed)
+  setInterval(updateData, 5000);

@@ -230,24 +230,24 @@ exports.serverDynamicData = async (req, res, next) => {
       const client = opcua.OPCUAClient.create(options);
 
       try {
-        console.log('Before connecting to server...');
+        // console.log('Before connecting to server...');
         await client.connect(endpointUrl);
-        console.log('After connecting to server...');
+        // console.log('After connecting to server...');
 
         const session = await client.createSession();
-        console.log('Session created');
+        // console.log('Session created');
 
         const browseResult = await session.browse('RootFolder');
-        console.log('Browsing completed. Results:');
+        // console.log('Browsing completed. Results:');
 
         for (const reference of browseResult.references) {
           const nodeId = reference.nodeId.toString();
           const browseName = reference.browseName.toString();
 
-          console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
+          // console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
 
           const dataValue = await session.readVariableValue(nodeId);
-          console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
+          // console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
 
           const obj = {
             dataName: dataName,
@@ -261,19 +261,20 @@ exports.serverDynamicData = async (req, res, next) => {
         wss.clients.forEach(client => {
           if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({ dataToUpdate: dataToUpdate }));
-            res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
+            // res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
           }
         });
-        // console.log(dataToUpdate)
-        res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
+        console.log(dataToUpdate)
+        res.status(200).json( { dataToUpdate: dataToUpdate });
+        // res.status(200).render('dynamicData')
 
-        console.log('Closing the session...');
+        // console.log('Closing the session...');
         await session.close();
-        console.log('Session closed');
+        // console.log('Session closed');
 
-        console.log('Disconnecting from the server...');
+        // console.log('Disconnecting from the server...');
         await client.disconnect();
-        console.log('Client disconnected from server');
+        // console.log('Client disconnected from server');
       } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -287,3 +288,7 @@ exports.serverDynamicData = async (req, res, next) => {
   }
 };
 
+exports.serverDynamicDataFE=async (req,res,next)=>
+{
+  res.status(200).render('dynamicData')
+}
