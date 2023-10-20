@@ -2,8 +2,48 @@ const express = require('express');
 const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
 const Server = require('./../models/serverModel');
-const opcua=require('node-opcua')
+const opcua = require('node-opcua')
 const WebSocket = require('ws');
+const sharp = require("sharp")
+const path = require('path');
+const fs = require("fs");
+
+
+function deleteImage(filePath) {
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // console.log("deletedd.....................")
+        }
+    });
+}
+
+async function updatePhoto(req) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const newImage = "/" + `${Date.now()}` + req.user.id + ".png";
+            const outputFilePath = path.resolve(`./public/uploads`) + newImage;
+            const img = path.resolve(`./public/uploads`) + "/" + req.file.filename;
+            await sharp(img).resize({ width: 400, height: 400 }).toFormat('png').png({ quality: 50 }).toFile(outputFilePath);
+
+            if (req.user.photo != "/uploads/default.png") {
+                const oldImage1 = path.resolve(`./public`) + req.user.photo;
+                const oldImage2 = path.resolve(`./public/uploads`) + "/" + req.file.filename;
+                deleteImage(oldImage1);
+                deleteImage(oldImage2);
+            } else {
+                const oldImage2 = path.resolve(`./public/uploads`) + "/" + req.file.filename;
+                deleteImage(oldImage2);
+            }
+            resolve(newImage);
+        } catch (err) {
+            console.log(err);
+            reject("failed");
+        }
+    })
+}
 
 exports.homePage = async (req, res, next) => {
     res.status(200).render('home');
@@ -22,34 +62,62 @@ exports.loginPage = async (req, res, next) => {
 exports.userProfile = async (req, res) => {
     res.status(200).render("userProfile");
 }
+const maxRetries = 5;
+const delayBetweenRetries = 1000; // 1 second
+let retries = 0;
+
+function deleteFileWithRetry(filePath) {
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error(`Error deleting file (retry ${retries}): ${err.message}`);
+            if (retries < maxRetries) {
+                retries++;
+                setTimeout(() => deleteFileWithRetry(filePath), delayBetweenRetries);
+            } else {
+                console.error(`Max retries reached. Unable to delete file: ${err.message}`);
+            }
+        } else {
+            console.log('File deleted successfully');
+        }
+    });
+}
 
 exports.updateUserData = async (req, res) => {
     try {
+        if (req.file) {
+            const userPhoto = await updatePhoto(req);
+            if (userPhoto != "failed")
+                req.user.photo = "/uploads" + userPhoto;
+            else {
+                throw new Error('photo upload failed');
+            }
+        }
         const updatedUser = await User.findByIdAndUpdate(req.user.id, {
             name: req.body.name,
             email: req.body.email,
-            phone: req.body.phone
+            phone: req.body.phone,
+            photo: req.user.photo,
         }, {
             new: true,
             runValidators: true
         });
+        const message = 'Profile updated successfully';
         res.status(200).render('userProfile', {
-            user: updatedUser
+            user: updatedUser,
+            message: message
         });
-
-    } catch (err) {
+    }
+    catch (err) {
+        console.log(err);
         res.status(404).json({
             status: "Failed",
             data: {
                 error: err
             }
-        })
+        });
+
     }
-
-
 }
-
-
 exports.serverCreation = async (req, res, next) => {
     try {
         let decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET, function (err, decoded) { return decoded.id; });
@@ -107,31 +175,31 @@ exports.startServer = async (req, res, next) => {
 // exports.serverDynamicData=async (req,res,next)=>
 // {
 //     const serverName = "server1";
-  
+
 //     const accessId = "12345678";
-     
+
 //     const dataToUpdate = [];
-    
+
 //       const ser = await Server.findOne({serverName:serverName})
 //       const endpoint= ser.serverEndPoint
 //       const dataName= ser.data[0].dataName
-    
-    
-    
-    
-      
+
+
+
+
+
 //         if(ser.accessId==accessId)
 //       {
 //         const endpointUrl = endpoint;
-    
+
 //         (async () => {
 //           try {
 //             const options = {
 //               endpointMustExist: false,
 //             };
-        
+
 //             const client = opcua.OPCUAClient.create(options);
-        
+
 //             // Step 1: Connect to the server
 //             try {
 //                 console.log('Before connecting to server...');
@@ -140,33 +208,33 @@ exports.startServer = async (req, res, next) => {
 //               } catch (error) {
 //                 console.error('Error connecting to server:', error.message);
 //               }
-            
-        
+
+
 //             // Step 2: Create a session
 //             console.log('Creating a session...');
 //             const session = await client.createSession();
 //             console.log('Session created');
-        
+
 //             // Step 3: Browse the server's address space (here we start from the RootFolder)
 //             console.log('Browsing the address space...');
 //             const browseResult = await session.browse('RootFolder');
 //             console.log('Browsing completed. Results:');
-              
-    
-    
-    
-    
-            
+
+
+
+
+
+
 //             // Step 4: Iterate through the references and read data from variables
 //             for (const reference of browseResult.references) {
 //                 const nodeId = reference.nodeId.toString();
 //                 const browseName = reference.browseName.toString();
-              
+
 //                 console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
-              
+
 //                 const dataValue = await session.readVariableValue(nodeId);
 //                 console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
-    
+
 //                 obj={
 //                   dataName:dataName,
 //                   dataValue:dataValue.value.value,
@@ -178,9 +246,9 @@ exports.startServer = async (req, res, next) => {
 //                 //   { $push: { data: { $each: dataToUpdate } } },
 //                 //   { new: true, runValidators: true }
 //                 // );
-        
-    
-    
+
+
+
 //               }
 //             //   console.log(dataToUpdate)
 //         res.status(200).render('dynamicData',{dataToUpdate:dataToUpdate})
@@ -189,7 +257,7 @@ exports.startServer = async (req, res, next) => {
 //             console.log('Closing the session...');
 //             await session.close();
 //             console.log('Session closed');
-        
+
 //             console.log('Disconnecting from the server...');
 //             await client.disconnect();
 //             console.log('Client disconnected from server');
@@ -197,13 +265,13 @@ exports.startServer = async (req, res, next) => {
 //             console.error('Error:', error.message);
 //           }
 //         })();
-        
-    
+
+
 //     }
 //     else{res.status(200).json({message:"error in dd"})}
 //       }
 
-    
+
 
 
 
@@ -211,84 +279,83 @@ exports.startServer = async (req, res, next) => {
 const wss = new WebSocket.Server({ port: 8080 }); // Use an appropriate port
 
 exports.serverDynamicData = async (req, res, next) => {
-  const serverName = "server1";
-  const accessId = "12345678";
-  const dataToUpdate = [];
+    const serverName = "server1";
+    const accessId = "12345678";
+    const dataToUpdate = [];
 
-  try {
-    const ser = await Server.findOne({ serverName: serverName });
-    const endpoint = ser.serverEndPoint;
-    const dataName = ser.data[0].dataName;
+    try {
+        const ser = await Server.findOne({ serverName: serverName });
+        const endpoint = ser.serverEndPoint;
+        const dataName = ser.data[0].dataName;
 
-    if (ser.accessId == accessId) {
-      const endpointUrl = endpoint;
+        if (ser.accessId == accessId) {
+            const endpointUrl = endpoint;
 
-      const options = {
-        endpointMustExist: false,
-      };
+            const options = {
+                endpointMustExist: false,
+            };
 
-      const client = opcua.OPCUAClient.create(options);
+            const client = opcua.OPCUAClient.create(options);
 
-      try {
-        // console.log('Before connecting to server...');
-        await client.connect(endpointUrl);
-        // console.log('After connecting to server...');
+            try {
+                // console.log('Before connecting to server...');
+                await client.connect(endpointUrl);
+                // console.log('After connecting to server...');
 
-        const session = await client.createSession();
-        // console.log('Session created');
+                const session = await client.createSession();
+                // console.log('Session created');
 
-        const browseResult = await session.browse('RootFolder');
-        // console.log('Browsing completed. Results:');
+                const browseResult = await session.browse('RootFolder');
+                // console.log('Browsing completed. Results:');
 
-        for (const reference of browseResult.references) {
-          const nodeId = reference.nodeId.toString();
-          const browseName = reference.browseName.toString();
+                for (const reference of browseResult.references) {
+                    const nodeId = reference.nodeId.toString();
+                    const browseName = reference.browseName.toString();
 
-          // console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
+                    // console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
 
-          const dataValue = await session.readVariableValue(nodeId);
-          // console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
+                    const dataValue = await session.readVariableValue(nodeId);
+                    // console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
 
-          const obj = {
-            dataName: dataName,
-            dataValue: dataValue.value.value,
-            timeStamp: new Date()
-          };
-          dataToUpdate.push(obj);
+                    const obj = {
+                        dataName: dataName,
+                        dataValue: dataValue.value.value,
+                        timeStamp: new Date()
+                    };
+                    dataToUpdate.push(obj);
+                }
+
+                // Send data updates via WebSocket
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ dataToUpdate: dataToUpdate }));
+                        // res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
+                    }
+                });
+                console.log(dataToUpdate)
+                res.status(200).json({ dataToUpdate: dataToUpdate });
+                // res.status(200).render('dynamicData')
+
+                // console.log('Closing the session...');
+                await session.close();
+                // console.log('Session closed');
+
+                // console.log('Disconnecting from the server...');
+                await client.disconnect();
+                // console.log('Client disconnected from server');
+            } catch (error) {
+                console.error('Error:', error.message);
+                res.status(500).json({ message: 'Internal Server Error' });
+            }
+        } else {
+            res.status(403).json({ message: 'Access denied' });
         }
-
-        // Send data updates via WebSocket
-        wss.clients.forEach(client => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ dataToUpdate: dataToUpdate }));
-            // res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
-          }
-        });
-        console.log(dataToUpdate)
-        res.status(200).json( { dataToUpdate: dataToUpdate });
-        // res.status(200).render('dynamicData')
-
-        // console.log('Closing the session...');
-        await session.close();
-        // console.log('Session closed');
-
-        // console.log('Disconnecting from the server...');
-        await client.disconnect();
-        // console.log('Client disconnected from server');
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ message: 'Internal Server Error' });
-      }
-    } else {
-      res.status(403).json({ message: 'Access denied' });
     }
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
 };
 
-exports.serverDynamicDataFE=async (req,res,next)=>
-{
-  res.status(200).render('dynamicData')
+exports.serverDynamicDataFE = async (req, res, next) => {
+    res.status(200).render('dynamicData')
 }
