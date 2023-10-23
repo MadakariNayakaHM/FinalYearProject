@@ -19,5 +19,6 @@ Router.route('/serverRegistration').get(viewsController.serverRegistration);
 Router.route('/clientCreation').get(viewsController.clientCreation);
 Router.route('/startServer').get(viewsController.startServer);
 Router.route('/serverDynamicData').get(viewsController.serverDynamicData);
-Router.route('/serverDynamicDataFE').get(viewsController.serverDynamicDataFE);
+Router.route('/serverDynamicDataFE/:serverName/:accessId').get(viewsController.serverDynamicDataFE);
+Router.route('/userServerClientDashBoardMain').get(viewsController.UserServerClientDashBoardMain);
 module.exports = Router;

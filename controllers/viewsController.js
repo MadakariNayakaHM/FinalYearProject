@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
 const Server = require('./../models/serverModel');
+const Client=require('./../models/clientModel');
 const opcua=require('node-opcua')
 const WebSocket = require('ws');
 
@@ -214,6 +215,11 @@ exports.serverDynamicData = async (req, res, next) => {
   const serverName = "server1";
   const accessId = "12345678";
   const dataToUpdate = [];
+  console.log(serverName,accessId)
+
+
+
+
 
   try {
     const ser = await Server.findOne({ serverName: serverName });
@@ -291,4 +297,17 @@ exports.serverDynamicData = async (req, res, next) => {
 exports.serverDynamicDataFE=async (req,res,next)=>
 {
   res.status(200).render('dynamicData')
+}
+
+exports.UserServerClientDashBoardMain= async(req,res,next)=>
+{
+
+  let decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET, function (err, decoded) { return decoded.id; });
+  let user = await User.findById(decoded)
+  // console.log(user)
+  let servers= await Server.find()
+  // console.log(servers)
+  let clients= await Client.find()
+  res.status(200).render('userServerClientDashboardMain',{user,servers,clients})
+
 }
