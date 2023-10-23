@@ -10,7 +10,6 @@ const login = async (email, password) => {
             }
         })
 
-
         if (res.data.status === "success") {
             window.alert("login successfull")
             window.setTimeout(() => {
@@ -23,6 +22,7 @@ const login = async (email, password) => {
         window.alert("login failed")
     }
 }
+
 const logout = async () => {
     try {
 
