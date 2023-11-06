@@ -15,7 +15,7 @@ table.table.table-striped.table-dark
       th(scope='col') View Client Details
   tbody
     each s in servers
-        if(`${s.userId._id}` === `${user._id}`)   
+          
             tr
                 th(scope='row')= s.serverName
                 td= s.serverEndPoint

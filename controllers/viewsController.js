@@ -2,7 +2,8 @@ const express = require('express');
 const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
 const Server = require('./../models/serverModel');
-const opcua=require('node-opcua')
+const Client= require('./../models/clientModel');
+const opcua=require('node-opcua');
 const WebSocket = require('ws');
 const sharp = require("sharp")
 const path = require('path');
@@ -280,13 +281,16 @@ const wss = new WebSocket.Server({ port: 8080 }); // Use an appropriate port
 
 exports.serverDynamicData = async (req, res, next) => {
   const serverName = "server1";
-  const accessId = "12345678";
+  const accessId = "8088547443";
+  console.log(
+   req.url
+  )
   const dataToUpdate = [];
 
     try {
         const ser = await Server.findOne({ serverName: serverName });
         const endpoint = ser.serverEndPoint;
-        const dataName = ser.data[0].dataName;
+        
 
         if (ser.accessId == accessId) {
             const endpointUrl = endpoint;
@@ -318,7 +322,7 @@ exports.serverDynamicData = async (req, res, next) => {
                     // console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
 
                     const obj = {
-                        dataName: dataName,
+                        dataName: browseName,
                         dataValue: dataValue.value.value,
                         timeStamp: new Date()
                     };
@@ -357,17 +361,19 @@ exports.serverDynamicData = async (req, res, next) => {
 };
 
 exports.serverDynamicDataFE = async (req, res, next) => {
+    console.log(req.params.serverName)
     res.status(200).render('dynamicData')
 }
 
 exports.UserServerClientDashBoardMain= async(req,res,next)=>
 {
 
-  let decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET, function (err, decoded) { return decoded.id; });
+  let decoded=jwt.verify(req.cookies.jwt, process.env.JWT_SECRET, function (err, decoded) { return decoded.id; });
+  console.log(decoded)
   let user = await User.findById(decoded)
-  // console.log(user)
+  console.log(user)
   let servers= await Server.find()
-  // console.log(servers)
+  console.log(servers)
   let clients= await Client.find()
   res.status(200).render('userServerClientDashboardMain',{user,servers,clients})
 

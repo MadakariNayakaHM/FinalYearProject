@@ -103,7 +103,7 @@
 
 const opcua = require('node-opcua');
 
-const endpointUrl = 'opc.tcp://26.107.113.149:4840/freeopcua/server1/';
+const endpointUrl = 'opc.tcp://127.0.0.1:4841/freeopcua/server1/';
 
 (async () => {
   try {

@@ -14,12 +14,6 @@ const serverSchema=mongoose.Schema(
             required:true,
             unique:true
         },
-        data:{type:[{
-            dataName:String,
-            dataValue:String,
-            timeStamp:String
-           
-        }]},
         status:{type:String,
         default:"stopped"}
 
