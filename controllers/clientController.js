@@ -13,7 +13,7 @@ exports.createClient=async(req,res,next)=>
     // const ser= await Server.findOne({serverEndPoint:serverEndPoint})
     // console.log(server)
     const ser=await Server.findOne({serverEndPoint:serverEndPoint})
-    const dataName= ser.data[0].dataName
+    
     console.log(ser)
     if(ser.accessId == accessId)
     {
@@ -29,72 +29,75 @@ const endpointUrl = serverEndPoint;
 
     (async () => {
       try {
-        const options = {
-          endpointMustExist: false,
-        };
-    
-        const client = opcua.OPCUAClient.create(options);
-    
-        // Step 1: Connect to the server
-        try {
-            console.log('Before connecting to server...');
-            await client.connect(endpointUrl);
-            console.log('After connecting to server...');
-          } catch (error) {
-            console.error('Error connecting to server:', error.message);
-          }
-        
-    
-        // Step 2: Create a session
-        console.log('Creating a session...');
-        const session = await client.createSession();
-        console.log('Session created');
-    
-        // Step 3: Browse the server's address space (here we start from the RootFolder)
-        console.log('Browsing the address space...');
-        const browseResult = await session.browse('RootFolder');
-        console.log('Browsing completed. Results:');
-          
-
-
-
-
-        const dataToUpdate = [];
-        // Step 4: Iterate through the references and read data from variables
-        for (const reference of browseResult.references) {
-            const nodeId = reference.nodeId.toString();
-            const browseName = reference.browseName.toString();
-          
-            console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
-          
-            const dataValue = await session.readVariableValue(nodeId);
-            console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
-
-            obj={
-              dataName:dataName,
-              dataValue:dataValue.value.value,
-              timeStamp: new Date()
+        while(1)
+        {
+          const options = {
+            endpointMustExist: false,
+          };
+      
+          const client = opcua.OPCUAClient.create(options);
+      
+          // Step 1: Connect to the server
+          try {
+              console.log('Before connecting to server...');
+              await client.connect(endpointUrl);
+              console.log('After connecting to server...');
+            } catch (error) {
+              console.error('Error connecting to server:', error.message);
             }
-            dataToUpdate.push(obj);
-            await Client.findByIdAndUpdate(
-              newClient._id,
-              { $push: { data: { $each: dataToUpdate } } },
-              { new: true, runValidators: true }
-            );
-    
-
-
-          }
           
-    
-        // Step 5: Close the session and disconnect from the server
-        console.log('Closing the session...');
-        await session.close();
-        console.log('Session closed');
-    
-        console.log('Disconnecting from the server...');
-        await client.disconnect();
-        console.log('Client disconnected from server');
+      
+          // Step 2: Create a session
+          console.log('Creating a session...');
+          const session = await client.createSession();
+          console.log('Session created');
+      
+          // Step 3: Browse the server's address space (here we start from the RootFolder)
+          console.log('Browsing the address space...');
+          const browseResult = await session.browse('RootFolder');
+          console.log('Browsing completed. Results:');
+            
+  
+  
+  
+  
+          const dataToUpdate = [];
+          // Step 4: Iterate through the references and read data from variables
+          for (const reference of browseResult.references) {
+              const nodeId = reference.nodeId.toString();
+              const browseName = reference.browseName.toString();
+            
+              console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
+            
+              const dataValue = await session.readVariableValue(nodeId);
+              console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
+  
+              obj={
+                dataName:browseName,
+                dataValue:dataValue.value.value,
+                timeStamp: new Date()
+              }
+              dataToUpdate.push(obj);
+              await Client.findByIdAndUpdate(
+                newClient._id,
+                { $push: { data: { $each: dataToUpdate } } },
+                { new: true, runValidators: true }
+              );
+      
+  
+  
+            }
+            
+      
+          // Step 5: Close the session and disconnect from the server
+          console.log('Closing the session...');
+          await session.close();
+          console.log('Session closed');
+      
+          // console.log('Disconnecting from the server...');
+           await client.disconnect();
+          // console.log('Client disconnected from server');
+        }
       } catch (error) {
         console.error('Error:', error.message);
       }

@@ -3,6 +3,7 @@ const User = require('./../models/userModel');
 const jwt = require('jsonwebtoken');
 const Server = require('./../models/serverModel');
 const Client= require('./../models/clientModel');
+const serverData=require('./../models/serverDataModel');
 const opcua=require('node-opcua');
 const WebSocket = require('ws');
 const sharp = require("sharp")
@@ -173,118 +174,14 @@ exports.startServer = async (req, res, next) => {
     }
 }
 
-// exports.serverDynamicData=async (req,res,next)=>
-// {
-//     const serverName = "server1";
-
-//     const accessId = "12345678";
-
-//     const dataToUpdate = [];
-
-//       const ser = await Server.findOne({serverName:serverName})
-//       const endpoint= ser.serverEndPoint
-//       const dataName= ser.data[0].dataName
-
-
-
-
-
-//         if(ser.accessId==accessId)
-//       {
-//         const endpointUrl = endpoint;
-
-//         (async () => {
-//           try {
-//             const options = {
-//               endpointMustExist: false,
-//             };
-
-//             const client = opcua.OPCUAClient.create(options);
-
-//             // Step 1: Connect to the server
-//             try {
-//                 console.log('Before connecting to server...');
-//                 await client.connect(endpointUrl);
-//                 console.log('After connecting to server...');
-//               } catch (error) {
-//                 console.error('Error connecting to server:', error.message);
-//               }
-
-
-//             // Step 2: Create a session
-//             console.log('Creating a session...');
-//             const session = await client.createSession();
-//             console.log('Session created');
-
-//             // Step 3: Browse the server's address space (here we start from the RootFolder)
-//             console.log('Browsing the address space...');
-//             const browseResult = await session.browse('RootFolder');
-//             console.log('Browsing completed. Results:');
-
-
-
-
-
-
-//             // Step 4: Iterate through the references and read data from variables
-//             for (const reference of browseResult.references) {
-//                 const nodeId = reference.nodeId.toString();
-//                 const browseName = reference.browseName.toString();
-
-//                 console.log(`Node BrowseName: ${browseName}, NodeId: ${nodeId}`);
-
-//                 const dataValue = await session.readVariableValue(nodeId);
-//                 console.log(`  Value: ${dataValue.value.value}, DataType: ${dataValue.value.dataType}`);
-
-//                 obj={
-//                   dataName:dataName,
-//                   dataValue:dataValue.value.value,
-//                   timeStamp: new Date()
-//                 }
-//                 dataToUpdate.push(obj);
-//                 // await Server.findByIdAndUpdate(
-//                 //   ser._id,
-//                 //   { $push: { data: { $each: dataToUpdate } } },
-//                 //   { new: true, runValidators: true }
-//                 // );
-
-
-
-//               }
-//             //   console.log(dataToUpdate)
-//         res.status(200).render('dynamicData',{dataToUpdate:dataToUpdate})
-//         // console.log(dataToUpdate)
-//             // Step 5: Close the session and disconnect from the server
-//             console.log('Closing the session...');
-//             await session.close();
-//             console.log('Session closed');
-
-//             console.log('Disconnecting from the server...');
-//             await client.disconnect();
-//             console.log('Client disconnected from server');
-//           } catch (error) {
-//             console.error('Error:', error.message);
-//           }
-//         })();
-
-
-//     }
-//     else{res.status(200).json({message:"error in dd"})}
-//       }
-
-
-
-
-
-// Create a WebSocket server
 const wss = new WebSocket.Server({ port: 8080 }); // Use an appropriate port
 
 exports.serverDynamicData = async (req, res, next) => {
-  const serverName = "server1";
-  const accessId = "8088547443";
-  console.log(
-   req.url
-  )
+  const serverName = req.params.serverName;
+  const accessId = req.params.accessId;
+//   console.log(req.params.serverName)
+//   console.log(req.params.accessId)
+// console.log(req.url)
   const dataToUpdate = [];
 
     try {
@@ -332,13 +229,13 @@ exports.serverDynamicData = async (req, res, next) => {
                 // Send data updates via WebSocket
                 wss.clients.forEach(client => {
                     if (client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ dataToUpdate: dataToUpdate }));
-                        // res.status(200).render('dynamicData', { dataToUpdate: dataToUpdate });
+                        client.send(JSON.stringify({ dataToUpdate: dataToUpdate}));
+                        
                     }
                 });
-                console.log(dataToUpdate)
+                    console.log(dataToUpdate)
                 res.status(200).json({ dataToUpdate: dataToUpdate });
-                // res.status(200).render('dynamicData')
+                
 
                 // console.log('Closing the session...');
                 await session.close();
@@ -360,9 +257,16 @@ exports.serverDynamicData = async (req, res, next) => {
     }
 };
 
+
+
+
+
 exports.serverDynamicDataFE = async (req, res, next) => {
-    console.log(req.params.serverName)
-    res.status(200).render('dynamicData')
+    const serverName=req.params.serverName
+    const accessId=req.params.accessId
+    console.log(req.url)
+    console.log(serverName,accessId)
+    res.status(200).render('dynamicData',{serverName,accessId})
 }
 
 exports.UserServerClientDashBoardMain= async(req,res,next)=>
@@ -378,3 +282,26 @@ exports.UserServerClientDashBoardMain= async(req,res,next)=>
   res.status(200).render('userServerClientDashboardMain',{user,servers,clients})
 
 }
+
+exports.viewVisualization = async (req, res, next) => {
+    try {
+      const serverId = req.params.id;
+  
+      const serversData = await serverData.findOne({ serverId: serverId }).exec();
+  
+      // Transform the data into the desired format
+      const transformedData = serversData.data[0].variableNode.map(node => ({
+        dataName: node.dataName,
+        dataSource: node.dataSource.map(item => ({
+          dataValue: item.dataValue,
+          timeStamp: item.timeStamp, // Update to match your field name
+        })),
+      }));
+  
+      res.status(200).render('visualGraphs',{transformedData});
+    } catch (e) {
+      console.error("Error:", e);
+      // Handle errors
+    }
+  };
+  

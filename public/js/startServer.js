@@ -10,7 +10,7 @@ const startServer= async (serverName, accessId ) => {
                 serverName,  accessId
             }
         })
-
+       console.log(res) 
         window.alert("server started successfull")
     } catch (err) {
          console.log(err);

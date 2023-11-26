@@ -39,67 +39,73 @@
 
 const opcua = require('node-opcua');
 
-const serverName ="server1";
-    const endpoint ="opc.tcp://127.0.0.1:4841/freeopcua/server1/";
-    const dataNames ="temparature,pressure,humidity".split(','); // Split comma-separated values into an array
-    
+const serverName = "server1";
+const endpoint = "opc.tcp://127.0.0.1:4841/freeopcua/server1/";
+const dataNames = "temperature,pressure,humidity".split(',');
 
-    const server = new opcua.OPCUAServer({
-      port: 4841,
-      resourcePath: `/freeopcua/${serverName}/`,
-      buildInfo: {
-        productName: `${serverName}`,
-        buildNumber: '1',
-        buildDate: new Date(),
-      },
+const server = new opcua.OPCUAServer({
+  port: 4841,
+  resourcePath: `/freeopcua/${serverName}/`,
+  buildInfo: {
+    productName: `${serverName}`,
+    buildNumber: '1',
+    buildDate: new Date(),
+  },
+});
+
+server.on('getEndpoints', (request, callback) => {
+  const endpoints = [
+    {
+      endpointUrl: `${endpoint}`,
+      securityMode: opcua.MessageSecurityMode.None,
+      securityPolicyUri: opcua.SecurityPolicy.None,
+      userIdentityTokens: [],
+      transportProfileUri: 'http://opcfoundation.org/UA-Profile/Transport/uatcp-uasc-uabinary',
+    },
+  ];
+
+  callback(null, endpoints);
+});
+
+server.initialize(() => {
+  const addressSpace = server.engine.addressSpace;
+  const namespace = addressSpace.getOwnNamespace();
+
+  // Create variables for each dataName
+  const variables = dataNames.map((dataName) => {
+    const variableNode = namespace.addVariable({
+      componentOf: server.engine.addressSpace.rootFolder,
+      browseName: dataName,
+      dataType: 'Double',
+      value: new opcua.Variant({ dataType: opcua.DataType.Double, value: 0.0 }),
     });
 
-    server.on('getEndpoints', (request, callback) => {
-      const endpoints = [
-        {
-          endpointUrl: `${endpoint}`,
-          securityMode: opcua.MessageSecurityMode.None,
-          securityPolicyUri: opcua.SecurityPolicy.None,
-          userIdentityTokens: [],
-          transportProfileUri: 'http://opcfoundation.org/UA-Profile/Transport/uatcp-uasc-uabinary',
-        },
-      ];
+    return variableNode;
+  });
 
-      callback(null, endpoints);
+  // Function to update variable values with random data
+  function updateVariableValues() {
+    variables.forEach((variable) => {
+      const randomValue = Math.random() * 50 + 20;
+      variable.setValueFromSource(new opcua.Variant({ dataType: opcua.DataType.Double, value: randomValue }));
     });
+  }
 
-    server.initialize(() => {
-      const addressSpace = server.engine.addressSpace;
-      const namespace = addressSpace.getOwnNamespace();
+  // Update variable values every second
+  setInterval(updateVariableValues, 1000);
 
-      // Create variables for each dataName
-      dataNames.forEach((dataName) => {
-        const variableNode = namespace.addVariable({
-          componentOf: server.engine.addressSpace.rootFolder,
-          browseName: dataName,
-          dataType: 'Double',
-          value: new opcua.Variant({ dataType: opcua.DataType.Double, value: 0.0 }),
-        });
+  server.start((err) => {
+    if (err) {
+      console.log("Error while starting server", err);
+    } else {
+      console.log('OPC-UA server is up and running on port', server.endpoints[0].port);
+    }
+  });
+});
 
-        const Value = Math.random() * 50 + 20;
-        variableNode.setValueFromSource(new opcua.Variant({ dataType: opcua.DataType.Double, value: Value }));
-
-
-        
-      });
-
-      server.start((err) => {
-        if (err) {
-          console.log("Error while starting server", err);
-        } else {
-          console.log('OPC-UA server is up and running on port', server.endpoints[0].port);
-        }
-      });
-    });
-
-    process.on('SIGINT', () => {
-      server.shutdown(() => {
-        console.log('Server shutdown completed.');
-        process.exit(0);
-      });
-    });
+process.on('SIGINT', () => {
+  server.shutdown(() => {
+    console.log('Server shutdown completed.');
+    process.exit(0);
+  });
+});
