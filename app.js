@@ -7,6 +7,7 @@ const viewsRoutes = require("./routes/viewsRoutes");
 const userRoutes = require("./routes/userRouter");
 const serverRoutes = require('./routes/serverRoutes');
 const clientRoutes = require('./routes/clientRoutes');
+const predictionRoutes = require('./routes/predictionRoutes');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/v1/user", userRoutes);
 app.use('/', viewsRoutes)
 app.use("/api/v1/server", serverRoutes);
 app.use("/api/v1/client", clientRoutes);
+app.use("/api/v1/predict", predictionRoutes);
 
 
 module.exports = app;
