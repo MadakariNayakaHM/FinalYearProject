@@ -12,7 +12,8 @@ const predict = async () => {
 }
 
 const predictButton = document.querySelector('.predict');
-if (predictButton) {
+if (predictButton) 
+{  
     predictButton.addEventListener('click', e => {
         e.preventDefault();
         predict();

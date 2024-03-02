@@ -1,99 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Scrolling Window</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <style>
-    /* Style for the black window */
-    .window {
-      height: 25vh; /* 1/4 of the viewport height */
-      width: 100%; /* Full width */
-      background-color: black;
-      overflow: hidden; /* Hide overflowing content */
-      padding: 20px; /* Add padding for better display */
-      box-sizing: border-box; /* Include padding in the width */
-      position: relative; /* Position for absolute elements */
-      color: white;
-    }
-    .inner-container {
-      display: inline-block;
-      white-space: nowrap;
-      transition: transform 1s linear; /* Smooth scrolling transition */
-    }
-    /* Style for the key-value pairs */
-    .key-value {
-      margin: 10px;
-      padding: 10px;
-      color: white;
-      display: inline-block;
-    }
-    .key {
-      font-weight: bold;
-      color: #ffcc00; /* Yellow */
-    }
-    .value {
-      color: #00ccff; /* Blue */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Section</title>
 </head>
 <body>
+    <div id="sectionToDownload">
+        <img src="./public/images/people.png" alt="">
+        <p>This is the content you want to download.</p>
+    </div>
 
-<div class="window">
-  <div class="inner-container" id="dynamic-content">
-  </div>
-</div>
+    <button id="downloadButton">Download Section</button>
 
-<script>
-  // Sample data (replace with your API response)
-  const dataArray = [
-    { DataName: 'Temperature', DataValue: '25.5°C', TimeStamp: '2023-09-25 14:30:00' },
-    { DataName: 'Pressure', DataValue: '1013 hPa', TimeStamp: '2023-09-25 14:35:00' },
-    { DataName: 'Humidity', DataValue: '70%', TimeStamp: '2023-09-25 14:40:00' },
-    { DataName: 'Humidity', DataValue: '70%', TimeStamp: '2023-09-25 14:40:00' },
-    { DataName: 'Humidity', DataValue: '70%', TimeStamp: '2023-09-25 14:40:00' },
-    { DataName: 'Humidity', DataValue: '70%', TimeStamp: '2023-09-25 14:40:00' },
-    { DataName: 'Humidity', DataValue: '70%', TimeStamp: '2023-09-25 14:40:00' },
-    
-    // Add more data objects in a similar structure
-  ];
-
-  const innerContainer = document.getElementById('dynamic-content');
-
-  dataArray.forEach((dataObject) => {
-    const keyValueElement = document.createElement('div');
-    keyValueElement.className = 'key-value';
-
-    // Iterate over keys (DataName, DataValue, TimeStamp)
-    for (const [key, value] of Object.entries(dataObject)) {
-      const keyElement = document.createElement('div');
-      keyElement.className = 'key';
-      keyElement.textContent = `${key}:`;
-
-      const valueElement = document.createElement('div');
-      valueElement.className = 'value';
-      valueElement.textContent = value;
-
-      keyValueElement.appendChild(keyElement);
-      keyValueElement.appendChild(valueElement);
-    }
-
-    innerContainer.appendChild(keyValueElement);
-  });
-
-  let position = 0;
-
-  // Function to scroll the content
-  function scrollContent() {
-    position -= 1; // Adjust the scrolling speed by changing this value
-    innerContainer.style.transform = `translateX(${position}px)`;
-    requestAnimationFrame(scrollContent);
-  }
-
-  // Start scrolling
-  scrollContent();
-</script>
+    <script src="scritp.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 </body>
 </html>

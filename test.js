@@ -452,141 +452,141 @@
 
 
 
-doctype html
-head
-  meta(charset='UTF-8')
-  meta(name='viewport' content='width=device-width, initial-scale=1.0')
-  title Dynamic Scrolling Window
-  link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
-  style.
-    /* Style for the black window */
-    .window {
-      height: 100%; 
-      width: 100%; 
-      background-color: black;
-      overflow: hidden; 
-      padding: 20px; 
-      box-sizing: border-box; 
-      position: relative; 
-      color: white;
-      display: flex;
-    }
-    .inner-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 50%;
-    }
-    .card {
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #212529; /* Dark color for card background */
-      border: 1px solid #6c757d; /* Border color */
-      border-radius: 5px;
-      width: 300px;
-    }
-    .card .key {
-      font-weight: bold;
-      color: #ffcc00; /* Yellow */
-    }
-    .card .value {
-      color: #00ccff; /* Blue */
-    }
-    .graph-container {
-      width: 50%;
-      padding: 20px;
-    }
+// doctype html
+// head
+//   meta(charset='UTF-8')
+//   meta(name='viewport' content='width=device-width, initial-scale=1.0')
+//   title Dynamic Scrolling Window
+//   link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
+//   style.
+//     /* Style for the black window */
+//     .window {
+//       height: 100%; 
+//       width: 100%; 
+//       background-color: black;
+//       overflow: hidden; 
+//       padding: 20px; 
+//       box-sizing: border-box; 
+//       position: relative; 
+//       color: white;
+//       display: flex;
+//     }
+//     .inner-container {
+//       display: flex;
+//       flex-direction: column;
+//       align-items: flex-start;
+//       width: 50%;
+//     }
+//     .card {
+//       margin: 10px 0;
+//       padding: 10px;
+//       background-color: #212529; /* Dark color for card background */
+//       border: 1px solid #6c757d; /* Border color */
+//       border-radius: 5px;
+//       width: 300px;
+//     }
+//     .card .key {
+//       font-weight: bold;
+//       color: #ffcc00; /* Yellow */
+//     }
+//     .card .value {
+//       color: #00ccff; /* Blue */
+//     }
+//     .graph-container {
+//       width: 50%;
+//       padding: 20px;
+//     }
 
-include navBar
-.window
-  #dynamic-content.inner-container
-  .graph-container
-    svg
+// include navBar
+// .window
+//   #dynamic-content.inner-container
+//   .graph-container
+//     svg
 
-script(src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js' integrity='sha512-t3+whaCkpXX3q7yceBe/P7VxNtB+OalfeZRz/2JHQy9Zdck90gHHEsWdKUMraazxLbyf7G6leG8jIuZgjA9Xmg==' crossorigin='anonymous' referrerpolicy='no-referrer')
+// script(src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js' integrity='sha512-t3+whaCkpXX3q7yceBe/P7VxNtB+OalfeZRz/2JHQy9Zdck90gHHEsWdKUMraazxLbyf7G6leG8jIuZgjA9Xmg==' crossorigin='anonymous' referrerpolicy='no-referrer')
 
-script.
-  // Function to update data
-  function updateData() {
-    fetch('/serverDynamicData')
-      .then(response => response.json())
-      .then(data => {
-        const innerContainer = document.getElementById('dynamic-content');
-        innerContainer.innerHTML = '';
+// script.
+//   // Function to update data
+//   function updateData() {
+//     fetch('/serverDynamicData')
+//       .then(response => response.json())
+//       .then(data => {
+//         const innerContainer = document.getElementById('dynamic-content');
+//         innerContainer.innerHTML = '';
 
-        const graphContainer = document.querySelector('.graph-container');
-        graphContainer.innerHTML = '';
+//         const graphContainer = document.querySelector('.graph-container');
+//         graphContainer.innerHTML = '';
 
-        data.dataToUpdate.forEach((dataObject) => {
-          // Exclude specific dataNames
-          if (['Objects', 'Types', 'Views'].includes(dataObject.dataName)) {
-            return;
-          }
+//         data.dataToUpdate.forEach((dataObject) => {
+//           // Exclude specific dataNames
+//           if (['Objects', 'Types', 'Views'].includes(dataObject.dataName)) {
+//             return;
+//           }
 
-          // Check if dataValue is not null
-          if (dataObject.dataValue !== null) {
-            const card = document.createElement('div');
-            card.className = 'card';
+//           // Check if dataValue is not null
+//           if (dataObject.dataValue !== null) {
+//             const card = document.createElement('div');
+//             card.className = 'card';
 
-            for (const [key, value] of Object.entries(dataObject)) {
-              const keyValueElement = document.createElement('div');
-              keyValueElement.className = 'key-value';
+//             for (const [key, value] of Object.entries(dataObject)) {
+//               const keyValueElement = document.createElement('div');
+//               keyValueElement.className = 'key-value';
 
-              const keyElement = document.createElement('div');
-              keyElement.className = 'key';
-              keyElement.textContent = `${key}:`;
+//               const keyElement = document.createElement('div');
+//               keyElement.className = 'key';
+//               keyElement.textContent = `${key}:`;
 
-              const valueElement = document.createElement('div');
-              valueElement.className = 'value';
-              valueElement.textContent = value;
+//               const valueElement = document.createElement('div');
+//               valueElement.className = 'value';
+//               valueElement.textContent = value;
 
-              keyValueElement.appendChild(keyElement);
-              keyValueElement.appendChild(valueElement);
+//               keyValueElement.appendChild(keyElement);
+//               keyValueElement.appendChild(valueElement);
 
-              card.appendChild(keyValueElement);
-            }
+//               card.appendChild(keyValueElement);
+//             }
 
-            innerContainer.appendChild(card);
+//             innerContainer.appendChild(card);
 
-            // D3.js code for line graph
-            const graphData = data.dataToUpdate
-              .filter(obj => obj.dataName === dataObject.dataName)
-              .map(obj => ({ value: obj.dataValue, timeStamp: new Date(obj.timeStamp) }));
+//             // D3.js code for line graph
+//             const graphData = data.dataToUpdate
+//               .filter(obj => obj.dataName === dataObject.dataName)
+//               .map(obj => ({ value: obj.dataValue, timeStamp: new Date(obj.timeStamp) }));
 
-            const graphWidth = 300;
-            const graphHeight = 200;
+//             const graphWidth = 300;
+//             const graphHeight = 200;
 
-            const svg = d3.select('.graph-container').append('svg')
-              .attr('width', graphWidth)
-              .attr('height', graphHeight);
+//             const svg = d3.select('.graph-container').append('svg')
+//               .attr('width', graphWidth)
+//               .attr('height', graphHeight);
 
-            const xScale = d3.scaleTime()
-              .domain(d3.extent(graphData, d => d.timeStamp))
-              .range([0, graphWidth]);
+//             const xScale = d3.scaleTime()
+//               .domain(d3.extent(graphData, d => d.timeStamp))
+//               .range([0, graphWidth]);
 
-            const yScale = d3.scaleLinear()
-              .domain([0, d3.max(graphData, d => d.value)])
-              .range([graphHeight, 0]);
+//             const yScale = d3.scaleLinear()
+//               .domain([0, d3.max(graphData, d => d.value)])
+//               .range([graphHeight, 0]);
 
-            const line = d3.line()
-              .x(d => xScale(d.timeStamp))
-              .y(d => yScale(d.value));
+//             const line = d3.line()
+//               .x(d => xScale(d.timeStamp))
+//               .y(d => yScale(d.value));
 
-            svg.append('path')
-              .data([graphData])
-              .attr('fill', 'none')
-              .attr('stroke', 'steelblue')
-              .attr('stroke-width', 1.5)
-              .attr('d', line);
-          }
-        });
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }
+//             svg.append('path')
+//               .data([graphData])
+//               .attr('fill', 'none')
+//               .attr('stroke', 'steelblue')
+//               .attr('stroke-width', 1.5)
+//               .attr('d', line);
+//           }
+//         });
+//       })
+//       .catch(error => console.error('Error fetching data:', error));
+//   }
 
-  // Update data initially
-  updateData();
+//   // Update data initially
+//   updateData();
 
-  // Update data every 5 seconds (adjust as needed)
-  setInterval(updateData, 5000);
-script(src='/js/serverDynamicData.js')
+//   // Update data every 5 seconds (adjust as needed)
+//   setInterval(updateData, 5000);
+// script(src='/js/serverDynamicData.js')

@@ -174,7 +174,7 @@ exports.startServer = async (req, res, next) => {
     }
 }
 
-const wss = new WebSocket.Server({ port: 8080 }); // Use an appropriate port
+const wss = new WebSocket.Server({ port: 8888 }); // Use an appropriate port
 
 exports.serverDynamicData = async (req, res, next) => {
   const serverName = req.params.serverName;
