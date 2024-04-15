@@ -19,6 +19,8 @@ const upload = multer({ storage: storage });
 
 Router.use(authController.isLoggedIn);
 
+
+
 Router.route('/home').get(viewsController.homePage);
 Router.get("/signup", viewsController.signupPage);
 Router.route('/login').get(viewsController.loginPage);
@@ -32,4 +34,9 @@ Router.route('/startServer').get(viewsController.startServer);
 Router.route('/serverDynamicData/:serverName/:accessId').get(viewsController.serverDynamicData);
 Router.route('/serverDynamicDataFE/:serverName/:accessId').get(viewsController.serverDynamicDataFE);
 Router.route('/userServerClientDashBoardMain').get(viewsController.UserServerClientDashBoardMain);
+
+Router.route('/predictionInputForm').get(viewsController.predictionInputForm);
+
+
+
 module.exports = Router;

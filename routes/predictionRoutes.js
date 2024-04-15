@@ -3,7 +3,7 @@ const Router = express.Router();
 const predictionControoller = require('../controllers/predictionController')
 
 
-Router.get("/prediction", predictionControoller.predictions);
-
+Router.post("/prediction", predictionControoller.predictions);
+Router.get("/download/pdf/:pdf", predictionControoller.downloadPdf);
 
 module.exports = Router;

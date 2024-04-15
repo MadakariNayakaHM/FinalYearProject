@@ -7,6 +7,7 @@ const signToken = id => {
     });
 };
 const createSendToken = (user, statusCode, res) => {
+    console.log(user._id);
     const token = signToken(user._id);
     const cookieOptions = {
         expires: new Date(
@@ -15,6 +16,8 @@ const createSendToken = (user, statusCode, res) => {
         httpOnly: true
     };
     res.cookie('jwt', token, cookieOptions);
+    console.log(res.cookie);
+
     user.password = undefined;
     res.status(statusCode).json({
         status: 'success',
@@ -64,6 +67,7 @@ exports.login = async (req, res, next) => {
             })
         }
         createSendToken(user, 200, res);
+    
     }
     catch (err) {
         res.status(404).json({
@@ -74,6 +78,7 @@ exports.login = async (req, res, next) => {
         })
     }
 }
+  
 exports.protect = async (req, res, next) => {
     try {
         let token;
@@ -98,6 +103,7 @@ exports.protect = async (req, res, next) => {
             //     })
             // }
             req.user = currentuser;
+
             res.locals.user = currentuser;
             next();
         }

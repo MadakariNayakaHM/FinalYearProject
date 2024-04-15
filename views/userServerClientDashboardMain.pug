@@ -16,6 +16,7 @@ table.table.table-striped.table-dark
       th(scope='col') Url
       th(scope='col') Access Id
       th(scope='col') View Server Real Time Data
+      th(scope='col') Predict the future values
       th(scope='col') View Client Details
   tbody
     each s in servers
@@ -27,6 +28,11 @@ table.table.table-striped.table-dark
                 td
                     button.btn.btn-primary.submit_btn.w-100.my-4
                         a(href=`/serverDynamicDataFE/${s.serverName}/${s.accessId}` style="color:white;") View
+                        
+                        
+                td        
+                    button.btn.btn-primary.submit_btn.w-100.my-4
+                        a(href=`/predictionInputForm` style="color:white;") Prediction
                 td
                   table.table.table-striped.table-dark
                     thead

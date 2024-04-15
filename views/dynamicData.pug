@@ -10,6 +10,7 @@ html
     title Dynamic Scrolling Window
     link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css')
     script(src='https://d3js.org/d3.v5.min.js')
+    script(src="https://html2canvas.hertzen.com/dist/html2canvas.min.js")
     script(src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js' integrity='sha512-t3+whaCkpXX3q7yceBe/P7VxNtB+OalfeZRz/2JHQy9Zdck90gHHEsWdKUMraazxLbyf7G6leG8jIuZgjA9Xmg==' crossorigin='anonymous' referrerpolicy='no-referrer')
   style.
     /* Style for the black window */
@@ -67,7 +68,8 @@ html
 
   body
     include navBar
-    .window
+    .window#window_content 
+      button#btn1.btn.btn-success(type='button' onclick="downloadSection('window_content','btn1')") download Report
       #dynamic-content.inner-container
       .graph-container
         svg.line-graph
@@ -517,4 +519,4 @@ script.
 
   // Update data and graphs every 10 seconds (adjust as needed)
   setInterval(updateData, 1000);
-
+script(src='/js/downloadSection.js')

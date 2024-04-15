@@ -305,3 +305,8 @@ exports.viewVisualization = async (req, res, next) => {
     }
   };
   
+  
+  exports.predictionInputForm = async (req, res, next) => {
+    res.status(200).render('predictionInputForm');
+  }
+  

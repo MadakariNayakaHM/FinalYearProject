@@ -6,18 +6,25 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import sys
 
+
 def train_and_predict():
+    
     jsondata = json.loads(sys.argv[1])
     predictdata = json.loads(sys.argv[2])
 
     # Create a dictionary to store models and evaluation metrics for each variable
+    
     model_info = {}
 
     for variable_data in jsondata:
+        
         variable_name = variable_data['dataName']
+        
+        
         df = pd.DataFrame(variable_data['dataSource'])
 
         df['timeStamp'] = pd.to_datetime(df['timeStamp'])
+
 
         target = 'dataValue'
 
@@ -44,12 +51,14 @@ def train_and_predict():
             'model': model,
             'evaluation_metrics': {'Mean Squared Error': mse, 'R-squared': r2}
         }
+        
 
     # Predict individual data points
     predictions_list = []
 
     for variable_data in predictdata:
-        variable_name = variable_data['dataName']
+        
+        variable_name = variable_data['dataName']  
         interval = int(variable_data['interval'])
         number = int(variable_data['number'])
 
@@ -70,7 +79,8 @@ def train_and_predict():
             new_data_df = pd.DataFrame(new_data)
             new_data_df['timeStamp'] = (new_data_df['timeStamp'] - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s')  # Convert to seconds
 
-            prediction = model.predict(new_data_df[['timeStamp']])  # Include 'timeStamp'
+            prediction = model.predict(new_data_df[['timeStamp']]) 
+            
             variable_predictions["dataName"] = variable_name
             variable_predictions["predictions"] = prediction.tolist()
             variable_predictions["timestamps"] = new_data_df['timeStamp'].apply(
@@ -85,6 +95,12 @@ def train_and_predict():
         for metric_name, metric_value in model_info_entry['evaluation_metrics'].items():
             print(f"{metric_name}: {metric_value}")
         print("\n")
+
+    # Include model evaluation metrics in response_data
+    for variable_name, model_info_entry in model_info.items():
+        predictions_list_entry = next((item for item in predictions_list if item["dataName"] == variable_name), None)
+        if predictions_list_entry:
+            predictions_list_entry["evaluation_metrics"] = model_info_entry['evaluation_metrics']
 
     # Print prediction results
     response_data = {"predictions": predictions_list, "status": "predicted"}
