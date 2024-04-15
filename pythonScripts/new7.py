@@ -10,7 +10,8 @@ import sys
 def train_and_predict():
     
     jsondata = json.loads(sys.argv[1])
-    predictdata = json.loads(sys.argv[2])
+    predictdata = json.loads(sys.argv[  
+        2])
 
     # Create a dictionary to store models and evaluation metrics for each variable
     

@@ -262,8 +262,9 @@ exports.startServer = async (req, res, next) => {
       for (let i = 0; i < 5; i++) {
         // Step 3: Browse the server's address space (here we start from the RootFolder)
         const browseResult = await session.browse('RootFolder');
+        console.log(browseResult)
         console.log('Browsing completed. Results:');
-
+        console.log()
         // Iterate through the references and read data from variables
         for (const reference of browseResult.references) {
           const nodeId = reference.nodeId.toString();
